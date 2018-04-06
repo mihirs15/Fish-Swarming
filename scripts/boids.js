@@ -1,28 +1,32 @@
-// Canvas variables
+//Canvas variables
 var canvasWidth = 480;
 var canvasHeight = 480;
 var bgColor = "#FFF9C4";
 
-// GUI coordinates
+//GUI coordinates
 var controlStartX = 50;
 var controlStartY = 100;
 var controlElementOffset = 20;
 var labelOffset = 12;
 
-// GUI
+//GUI
 var attractSlider;
 var alignSlider;
 var repelSlider;
+
 var radiusAttractSlider;
 var radiusAlignSlider;
 var radiusRepelSlider;
+
 var attractLabel;
 var alignLabel;
 var repelLabel;
-
-// Flock
+var radiusAttractLabel;
+var radiusAlignLabel;
+var radiusRepelLabel;
+//FLock
 var flock;
-var initialBoids = 400;
+var initialBoids = 100;
 
 class Flock {
   constructor() {
@@ -52,13 +56,13 @@ class Flock {
     }
     stroke("#FF0000");
     noFill();
-    ellipse(this.boidList[0].position.x, this.boidList[0].position.y, this.boidList[0].repulsionRange, this.boidList[0].repulsionRange);
+    ellipse(this.boidList[0].position.x, this.boidList[0].position.y, radiusRepelSlider.value(), radiusRepelSlider.value());
     stroke("#00FF00");
     noFill();
-    ellipse(this.boidList[0].position.x, this.boidList[0].position.y, this.boidList[0].alignmentRange, this.boidList[0].alignmentRange);
+    ellipse(this.boidList[0].position.x, this.boidList[0].position.y, radiusAttractSlider.value(), radiusAttractSlider.value());
     stroke("#0000FF");
     noFill();
-    ellipse(this.boidList[0].position.x, this.boidList[0].position.y, this.boidList[0].attractionRange, this.boidList[0].attractionRange);
+    ellipse(this.boidList[0].position.x, this.boidList[0].position.y, radiusAlignSlider.value(), radiusAlignSlider.value());
     stroke("#000000");
   }
 };
@@ -103,7 +107,7 @@ class Boid {
       var displacement = p5.Vector.sub(flock.boidList[i].position, this.position);
       var d = displacement.mag();
       //if both are too close
-      if(d<=this.repulsionRange) {
+      if(d<=radiusRepelSlider.value()) {
         //move along the reverse direction of displacement
         displacement.normalize();
         //lower distance means more repulsion, so 1/d scaling is applied
@@ -132,7 +136,7 @@ class Boid {
         continue;
       var displacement = p5.Vector.sub(flock.boidList[i].position, this.position);
       var d = displacement.mag();
-      if(d<=this.alignmentRange) {
+      if(d<=radiusAlignSlider.value()) {
         v.add(flock.boidList[i].velocity)
         count++;
       }
@@ -154,7 +158,7 @@ class Boid {
         continue;
       var displacement = p5.Vector.sub(flock.boidList[i].position, this.position);
       var d = displacement.mag();
-      if(d<=this.alignmentRange) {
+      if(d<=radiusAttractSlider.value()) {
         center.add(flock.boidList[i].position)
         count++;
       }
@@ -210,17 +214,33 @@ function createGUIElements() {
   repelSlider = createSlider(0, 2, 1, 0.05);
   alignSlider = createSlider(0, 2, 1, 0.05);
 
+  radiusAttractSlider = createSlider(0,60,45,0.01);
+  radiusAlignSlider = createSlider(0,60,25,0.01);
+  radiusRepelSlider = createSlider(0,60,12,0.01);
+
+
   attractSlider.position(controlStartX, controlStartY + 1*controlElementOffset);
   repelSlider.position(controlStartX, controlStartY + 2*controlElementOffset);
   alignSlider.position(controlStartX, controlStartY + 3*controlElementOffset);
+  radiusAttractSlider.position(controlStartX, controlStartY + 4*controlElementOffset);
+  radiusRepelSlider.position(controlStartX, controlStartY + 5*controlElementOffset);
+  radiusAlignSlider.position(controlStartX, controlStartY + 6*controlElementOffset);
 
   attractLabel = createDiv('attraction');
   repelLabel = createDiv('repulsion');
   alignLabel = createDiv('align');
 
+  radiusAttractLabel = createDiv('radius attraction');
+  radiusRepelLabel = createDiv('radius repulsion');
+  radiusAlignLabel = createDiv('radius align');
+
   attractLabel.position(attractSlider.x + attractSlider.width + labelOffset, attractSlider.y);
   repelLabel.position(repelSlider.x + repelSlider.width + labelOffset, repelSlider.y);
   alignLabel.position(alignSlider.x + alignSlider.width + labelOffset, alignSlider.y);
+
+  radiusAttractLabel.position(radiusAttractSlider.x + radiusAttractSlider.width + labelOffset, radiusAttractSlider.y);
+  radiusRepelLabel.position(radiusRepelSlider.x + radiusRepelSlider.width + labelOffset, radiusRepelSlider.y);
+  radiusAlignLabel.position(radiusAlignSlider.x + radiusAlignSlider.width + labelOffset, radiusAlignSlider.y);
 }
 
 //setup here
