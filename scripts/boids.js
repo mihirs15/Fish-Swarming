@@ -9,7 +9,7 @@ var controlStartY = 100;
 var controlElementOffset = 20;
 var labelOffset = 12;
 
-//GUI
+// GUI
 var attractSlider;
 var alignSlider;
 var repelSlider;
@@ -24,9 +24,16 @@ var repelLabel;
 var radiusAttractLabel;
 var radiusAlignLabel;
 var radiusRepelLabel;
-//FLock
+
+//Flock
 var flock;
 var initialBoids = 100;
+
+// Colors
+var totalColors = 2;
+var greenColor;
+var blueColor;
+var colorArray;
 
 class Flock {
   constructor() {
@@ -71,23 +78,24 @@ class Flock {
 class Boid {
   constructor(position, velocity) {
     this.position = position;
-    this.bodyRadius=1;
+    this.bodyRadius = 3.5;
     this.velocity = velocity;
     this.repulsionRange = 12*this.bodyRadius;
     this.alignmentRange = 25*this.bodyRadius;
     this.attractionRange = 45*this.bodyRadius;
     this.maxSpeed = 1;
+    this.color = floor(random(totalColors));
   }
 
   wrap() {
-    //wrap x
+    // wrap x
     if(this.position.x<0) {
       this.position.x=canvasWidth;
     }
     else if(this.position.x>canvasWidth) {
       this.position.x=0;
     }
-    //wrap y
+    // wrap y
     if(this.position.y<0) {
       this.position.y = canvasHeight;
     }
@@ -136,7 +144,7 @@ class Boid {
         continue;
       var displacement = p5.Vector.sub(flock.boidList[i].position, this.position);
       var d = displacement.mag();
-      if(d<=radiusAlignSlider.value()) {
+      if(d <= radiusAlignSlider.value()) {
         v.add(flock.boidList[i].velocity)
         count++;
       }
@@ -153,12 +161,14 @@ class Boid {
     var center = createVector(0,0);
     var count = 0;
 
-    for(var i=0;i<flock.boidList.length;i++) {
-      if(this==flock.boidList[i])
+    for(var i = 0; i < flock.boidList.length; i++) {
+      if(this == flock.boidList[i])
         continue;
       var displacement = p5.Vector.sub(flock.boidList[i].position, this.position);
       var d = displacement.mag();
-      if(d<=radiusAttractSlider.value()) {
+      if(d <= radiusAttractSlider.value() && 
+        this.color == flock.boidList[i].color) {
+        // console.log(this.color + " " + flock.boidList[i].color);
         center.add(flock.boidList[i].position)
         count++;
       }
@@ -199,11 +209,13 @@ class Boid {
     var theta = this.velocity.heading()
     push();
     translate(this.position.x,this.position.y);
-    rotate(theta+PI/2);
+    rotate(theta + PI / 2);
     beginShape();
     vertex(0, -this.bodyRadius);
-    vertex(-0.5*this.bodyRadius, this.bodyRadius*1);
-    vertex(0.5*this.bodyRadius, this.bodyRadius*1);
+    vertex(-0.5 * this.bodyRadius, this.bodyRadius * 1);
+    vertex(0.5 * this.bodyRadius, this.bodyRadius * 1);
+    // console.log(colorArray[this.color])
+    fill(colorArray[this.color])
     endShape(CLOSE);
     pop();
   }
@@ -219,12 +231,12 @@ function createGUIElements() {
   radiusRepelSlider = createSlider(0,60,12,0.01);
 
 
-  attractSlider.position(controlStartX, controlStartY + 1*controlElementOffset);
-  repelSlider.position(controlStartX, controlStartY + 2*controlElementOffset);
-  alignSlider.position(controlStartX, controlStartY + 3*controlElementOffset);
-  radiusAttractSlider.position(controlStartX, controlStartY + 4*controlElementOffset);
-  radiusRepelSlider.position(controlStartX, controlStartY + 5*controlElementOffset);
-  radiusAlignSlider.position(controlStartX, controlStartY + 6*controlElementOffset);
+  attractSlider.position(controlStartX, controlStartY + 1 * controlElementOffset);
+  repelSlider.position(controlStartX, controlStartY + 2 * controlElementOffset);
+  alignSlider.position(controlStartX, controlStartY + 3 * controlElementOffset);
+  radiusAttractSlider.position(controlStartX, controlStartY + 4 * controlElementOffset);
+  radiusRepelSlider.position(controlStartX, controlStartY + 5 * controlElementOffset);
+  radiusAlignSlider.position(controlStartX, controlStartY + 6 * controlElementOffset);
 
   attractLabel = createDiv('attraction');
   repelLabel = createDiv('repulsion');
@@ -245,6 +257,11 @@ function createGUIElements() {
 
 //setup here
 function setup() {
+  // Colors
+  greenColor = color(0, 255, 0);
+  blueColor = color(0, 0, 255);
+  colorArray = [greenColor, blueColor];
+  // Canvas
   var canvas = createCanvas(canvasWidth, canvasHeight);
   canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2)
   background(bgColor);
