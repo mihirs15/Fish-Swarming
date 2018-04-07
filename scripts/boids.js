@@ -303,7 +303,7 @@ function draw() {
 class Predator {
   constructor(position, velocity) {
     this.position = position;
-    this.bodyRadius = 10.0;
+    this.bodyRadius = 5.0;
     this.velocity = velocity;
     this.repulsionRange = 12 * this.bodyRadius;
     this.alignmentRange = 25 * this.bodyRadius;
@@ -333,11 +333,11 @@ class Predator {
     var v = createVector(0,0);
     var count = 0;
     //scan for neighbors
-    for(var i=0; i<flock.boidList.length; i++) {
-      if(this==flock.boidList[i])
+    for(var i = 0; i < predatorFlock.boidList.length; i++) {
+      if(this == predatorFlock.boidList[i])
         continue;
       //calculate displacement with respect to this boid
-      var displacement = p5.Vector.sub(flock.boidList[i].position, this.position);
+      var displacement = p5.Vector.sub(predatorFlock.boidList[i].position, this.position);
       var d = displacement.mag();
       //if both are too close
       if(d<=radiusRepelSlider.value()) {
@@ -415,7 +415,7 @@ class Predator {
   }
 
   r4_lock() {
-    var neighbordist = 200;
+    var neighbordist = this.attractionRange;
     var averageBoid = createVector(0,0);
     var nearbyBoids = 0;
 
@@ -436,7 +436,6 @@ class Predator {
   }
 
   updatePosition() {
-    // var v1 = this.r1_avoid().mult(repelSlider.value());
     // var v2 = this.r2_align().mult(alignSlider.value());
     // var v3 = this.r3_attract().mult(attractSlider.value());
 
@@ -446,8 +445,10 @@ class Predator {
     // this.velocity.add(v3);
 
     //limit velocity to maxSpeed
+    var v1 = this.r1_avoid().mult(1.0);
     var lockingVelocity = this.r4_lock().mult(1.0);
     this.velocity.add(lockingVelocity);
+    this.velocity.add(v1);
     this.velocity.limit(this.maxSpeed);
     this.position.add(this.velocity);
     this.wrap();
