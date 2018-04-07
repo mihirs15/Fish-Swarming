@@ -73,13 +73,13 @@ class Flock {
     }
     stroke("#FF0000");
     noFill();
-    ellipse(this.boidList[0].position.x, this.boidList[0].position.y, radiusRepelSlider.value(), radiusRepelSlider.value());
+    ellipse(this.boidList[0].position.x, this.boidList[0].position.y, 2 * radiusRepelSlider.value(), 2 * radiusRepelSlider.value());
     stroke("#00FF00");
     noFill();
-    ellipse(this.boidList[0].position.x, this.boidList[0].position.y, radiusAttractSlider.value(), radiusAttractSlider.value());
+    ellipse(this.boidList[0].position.x, this.boidList[0].position.y, 2 * radiusAttractSlider.value(), 2 * radiusAttractSlider.value());
     stroke("#0000FF");
     noFill();
-    ellipse(this.boidList[0].position.x, this.boidList[0].position.y, radiusAlignSlider.value(), radiusAlignSlider.value());
+    ellipse(this.boidList[0].position.x, this.boidList[0].position.y, 2 * radiusAlignSlider.value(), 2 * radiusAlignSlider.value());
     stroke("#000000");
   }
 };
